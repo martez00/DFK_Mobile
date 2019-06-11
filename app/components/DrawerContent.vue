@@ -21,12 +21,15 @@
                         <Label col="0" text.decode="&#xf005;" class="fa"></Label>
                         <Label col="1" text="Rezultatai" class="p-r-10"></Label>
                     </GridLayout>
-        
-                    <StackLayout class="hr-light"></StackLayout>
 
-                    <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Settings' ? ' selected': '')" @tap="onNavigationItemTap(Settings)">
+                     <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Table' ? ' selected': '')" @tap="onNavigationItemTap(Table)">
                         <Label col="0" text.decode="&#xf005;" class="fa"></Label>
-                        <Label col="1" text="Settings" class="p-r-10"></Label>
+                        <Label col="1" text="Turnyro lentelė" class="p-r-10"></Label>
+                    </GridLayout>
+
+                     <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Players' ? ' selected': '')" @tap="onNavigationItemTap(Players)">
+                        <Label col="0" text.decode="&#xf005;" class="fa"></Label>
+                        <Label col="1" text="Žaidėjai" class="p-r-10"></Label>
                     </GridLayout>
                 </StackLayout>
             </ScrollView>
@@ -37,6 +40,8 @@
 import Home from "./Home";
 import Schedule from "./Schedule";
 import Results from "./Results";
+import Table from "./Table";
+import Players from "./Players";
 import Settings from "./Settings";
 
 import * as utils from "~/shared/utils";
@@ -53,6 +58,8 @@ export default {
       Home: Home,
       Schedule: Schedule,
       Results: Results,
+      Table: Table,
+      Players: Players,
       Settings: Settings,
       selectedPage: ""
     };
@@ -61,6 +68,8 @@ export default {
     Home,
     Schedule,
     Results,
+    Table,
+    Players,
     Settings
   },
   methods: {

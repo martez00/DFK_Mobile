@@ -4,6 +4,9 @@ import App from "./components/App";
 import Home from "./components/Home";
 import Schedule from "./components/Schedule";
 import Results from "./components/Results";
+import Table from "./components/Table";
+import Players from "./components/Players";
+import Post from "./components/Post";
 import DrawerContent from "./components/DrawerContent";
 import RadSideDrawer from "nativescript-ui-sidedrawer/vue";
 
@@ -13,7 +16,10 @@ Vue.use(VueAxios);
 const routes = {
   Home,
   Schedule,
-  Results
+  Results,
+  Table,
+  Players,
+  Post
 };
 
 Vue.config.silent = (TNS_ENV === 'production');
