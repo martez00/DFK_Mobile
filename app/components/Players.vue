@@ -50,26 +50,39 @@
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
-import NoInternet from "./NoInternet.vue";
+import NoInternetComponent from "./Failed.vue";
 const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   components: {
     AppActionBar: ActionBarComponent,
-    NoInternet: NoInternet
+    NoInternet: NoInternetComponent
   },
   data() {
     return {
       players: [],
       log: [],
       Table: this.$routes.Table,
-      noInternetFound: false
+      noInternetFound: false,
+      playersWasTaken: false
     };
   },
   mounted() {
     SelectedPageService.getInstance().updateSelectedPage("Players");
     if (this.noInternetFound == false) this.getPlayers();
+    connectivityModule.startMonitoring(newConnectionType => {
+      switch (newConnectionType) {
+        case connectivityModule.connectionType.none:
+          console.log("Connection type changed to none.");
+          this.noInternetFound = true;
+          break;
+        default:
+          this.noInternetFound = false;
+          if (this.playersWasTaken == false) this.getPlayers();
+          break;
+      }
+    });
   },
   created() {
     const myConnectionType = connectivityModule.getConnectionType();
@@ -82,17 +95,6 @@ export default {
         this.noInternetFound = false;
         break;
     }
-    connectivityModule.startMonitoring(newConnectionType => {
-      switch (newConnectionType) {
-        case connectivityModule.connectionType.none:
-          console.log("Connection type changed to none.");
-          this.noInternetFound = true;
-          break;
-        default:
-          this.noInternetFound = false;
-          break;
-      }
-    });
   },
   methods: {
     getPositionImage(position) {
@@ -114,6 +116,7 @@ export default {
         .catch(err => {
           console.log(err);
         });
+        this.playersWasTaken = true;
     },
     onSwipe(args) {
       let direction =

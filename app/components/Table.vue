@@ -4,7 +4,12 @@
     <GridLayout class="page-content">
       <NoInternet v-if="noInternetFound === true" selected_page="Table"/>
       <GridLayout rows="40, *, 40" v-if="noInternetFound === false">
-        <GridLayout columns="30, *, 30, 30" class="padding-items" style="background-color: #f7f7f7;" row="0">
+        <GridLayout
+          columns="30, *, 30, 30"
+          class="padding-items"
+          style="background-color: #f7f7f7;"
+          row="0"
+        >
           <Label
             class="place"
             horizontalAlignment="center"
@@ -13,7 +18,7 @@
             text="Vt."
             textWrap="true"
           />
-             <Label
+          <Label
             class="place"
             horizontalAlignment="left"
             verticalAlignment="middle"
@@ -21,7 +26,7 @@
             text="Komanda"
             textWrap="true"
           />
-             <Label
+          <Label
             class="place"
             horizontalAlignment="center"
             verticalAlignment="middle"
@@ -29,7 +34,7 @@
             text="Ž"
             textWrap="true"
           />
-             <Label
+          <Label
             class="place"
             horizontalAlignment="center"
             verticalAlignment="middle"
@@ -112,14 +117,14 @@
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
-import NoInternet from "./NoInternet.vue";
+import NoInternetComponent from "./Failed.vue";
 const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   components: {
     AppActionBar: ActionBarComponent,
-    NoInternet: NoInternet
+    NoInternet: NoInternetComponent
   },
   data() {
     return {
@@ -127,7 +132,8 @@ export default {
       Results: this.$routes.Results,
       Players: this.$routes.Players,
       noInternetFound: false,
-      tableItems: []
+      tableItems: [],
+      tableWasTaken: false
     };
   },
   computed: {},
@@ -142,6 +148,10 @@ export default {
         this.noInternetFound = false;
         break;
     }
+  },
+  mounted() {
+    SelectedPageService.getInstance().updateSelectedPage("Table");
+    if (this.noInternetFound == false) this.getTableItems();
     connectivityModule.startMonitoring(newConnectionType => {
       switch (newConnectionType) {
         case connectivityModule.connectionType.none:
@@ -150,14 +160,10 @@ export default {
           break;
         default:
           this.noInternetFound = false;
-          this.getTableItems();
+          if (this.tableWasTaken == false) this.getTableItems();
           break;
       }
     });
-  },
-  mounted() {
-    SelectedPageService.getInstance().updateSelectedPage("Table");
-    if (this.noInternetFound == false) this.getTableItems();
   },
   methods: {
     checkIfDainava(id) {
@@ -177,6 +183,7 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      this.tableWasTaken = true;
     },
     onSwipe(args) {
       let direction =

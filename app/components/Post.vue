@@ -31,14 +31,14 @@ const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
-import NoInternet from "./NoInternet.vue";
+import NoInternetComponent from "./Failed.vue";
 const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   props: ["post_article"],
   components: {
     AppActionBar: ActionBarComponent,
-    NoInternet: NoInternet
+    NoInternet: NoInternetComponent
   },
   data() {
     return {

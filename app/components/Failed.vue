@@ -1,31 +1,18 @@
 <template>
   <GridLayout class="page-content">
-    <GridLayout rows="*">
-      <ScrollView row="0">
-        <Label class="page-placeholder" :text="message" textWrap="true"></Label>
-      </ScrollView>
-    </GridLayout>
+    <ScrollView>
+      <Label class="page-placeholder" :text="message" textWrap="true"></Label>
+    </ScrollView>
   </GridLayout>
 </template>
 
 <script>
-import SelectedPageService from "../shared/selected-page-service";
-import ActionBarComponent from "./ActionBar.vue";
-const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
-
 export default {
   props: ["selected_page"],
-  components: {
-    AppActionBar: ActionBarComponent
-  },
   data() {
     return {
-      log: [],
-      openedPage: this.selected_page,
+      openedPage: this.selected_page
     };
-  },
-  mounted() {
-    SelectedPageService.getInstance().updateSelectedPage(this.openedPage);
   },
   computed: {
     message() {

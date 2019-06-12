@@ -1,13 +1,13 @@
 import Vue from "nativescript-vue";
 import VueAxios from 'vue-axios'
-import App from "./components/App";
-import Home from "./components/Home";
-import Schedule from "./components/Schedule";
-import Results from "./components/Results";
-import Table from "./components/Table";
-import Players from "./components/Players";
-import Post from "./components/Post";
-import DrawerContent from "./components/DrawerContent";
+import App from "./components/App.vue";
+import Home from "./components/Home.vue";
+import Schedule from "./components/Schedule.vue";
+import Results from "./components/Results.vue";
+import Table from "./components/Table.vue";
+import Players from "./components/Players.vue";
+import Post from "./components/Post.vue";
+import DrawerContent from "./components/DrawerContent.vue";
 import RadSideDrawer from "nativescript-ui-sidedrawer/vue";
 
 Vue.use(RadSideDrawer);

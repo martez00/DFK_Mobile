@@ -42,14 +42,14 @@
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
-import NoInternet from "./NoInternet.vue";
+import NoInternetComponent from "./Failed.vue";
 const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   components: {
     AppActionBar: ActionBarComponent,
-    NoInternet: NoInternet
+    NoInternet: NoInternetComponent
   },
   data() {
     return {
@@ -58,12 +58,27 @@ export default {
       log: [],
       Schedule: this.$routes.Schedule,
       Post: this.$routes.Post,
+      postWasTaken: false,
       noInternetFound: false
     };
   },
   mounted() {
     SelectedPageService.getInstance().updateSelectedPage("Home");
     if (this.noInternetFound == false) this.getPosts();
+    connectivityModule.startMonitoring(newConnectionType => {
+      switch (newConnectionType) {
+        case connectivityModule.connectionType.none:
+          console.log("Connection type changed to none.");
+          this.noInternetFound = true;
+          break;
+        default:
+          this.noInternetFound = false;
+          if (this.postWasTaken == false) {
+            this.getPosts();
+          }
+          break;
+      }
+    });
   },
   created() {
     const myConnectionType = connectivityModule.getConnectionType();
@@ -76,20 +91,6 @@ export default {
         this.noInternetFound = false;
         break;
     }
-    connectivityModule.startMonitoring(newConnectionType => {
-      switch (newConnectionType) {
-        case connectivityModule.connectionType.none:
-          console.log("Connection type changed to none.");
-          this.noInternetFound = true;
-          break;
-        default:
-          this.noInternetFound = false;
-          if (!Array.isArray(this.posts) || !this.posts.length) {
-            this.getPosts();
-          }
-          break;
-      }
-    });
   },
   computed: {},
   methods: {
@@ -136,6 +137,7 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      this.postWasTaken = true;
     },
     onSwipe(args) {
       let direction =

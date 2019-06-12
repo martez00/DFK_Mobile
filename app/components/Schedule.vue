@@ -70,14 +70,14 @@
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
-import NoInternet from "./NoInternet.vue";
+import NoInternetComponent from "./Failed.vue";
 const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
 const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   components: {
     AppActionBar: ActionBarComponent,
-    NoInternet: NoInternet
+    NoInternet: NoInternetComponent
   },
   data() {
     return {
@@ -85,7 +85,8 @@ export default {
       matches: [],
       Home: this.$routes.Home,
       Results: this.$routes.Results,
-      noInternetFound: false
+      noInternetFound: false,
+      matchesWasTaken: false
     };
   },
   created() {
@@ -99,6 +100,10 @@ export default {
         this.noInternetFound = false;
         break;
     }
+  },
+  mounted() {
+    SelectedPageService.getInstance().updateSelectedPage("Schedule");
+    if (this.noInternetFound == false) this.getMatches();
     connectivityModule.startMonitoring(newConnectionType => {
       switch (newConnectionType) {
         case connectivityModule.connectionType.none:
@@ -107,14 +112,10 @@ export default {
           break;
         default:
           this.noInternetFound = false;
-          this.getMatches();
+          if (this.matchesWasTaken == false) this.getMatches();
           break;
       }
     });
-  },
-  mounted() {
-    SelectedPageService.getInstance().updateSelectedPage("Schedule");
-    if (this.noInternetFound == false) this.getMatches();
   },
   computed: {},
   methods: {
@@ -160,6 +161,7 @@ export default {
         .catch(err => {
           console.log(err);
         });
+      this.matchesWasTaken = true;
     },
     onSwipe(args) {
       let direction =

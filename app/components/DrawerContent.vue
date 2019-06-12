@@ -37,12 +37,11 @@
 </template>
 
 <script>
-import Home from "./Home";
-import Schedule from "./Schedule";
-import Results from "./Results";
-import Table from "./Table";
-import Players from "./Players";
-import Settings from "./Settings";
+import Home from "./Home.vue";
+import Schedule from "./Schedule.vue";
+import Results from "./Results.vue";
+import Table from "./Table.vue";
+import Players from "./Players.vue";
 
 import * as utils from "~/shared/utils";
 import SelectedPageService from "~/shared/selected-page-service";
@@ -60,7 +59,6 @@ export default {
       Results: Results,
       Table: Table,
       Players: Players,
-      Settings: Settings,
       selectedPage: ""
     };
   },
@@ -70,7 +68,6 @@ export default {
     Results,
     Table,
     Players,
-    Settings
   },
   methods: {
     onNavigationItemTap(component) {
