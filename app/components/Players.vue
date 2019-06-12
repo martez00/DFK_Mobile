@@ -2,7 +2,8 @@
   <Page class="page">
     <AppActionBar page_name="Žaidėjai"/>
     <GridLayout class="page-content">
-      <GridLayout rows="*, 40">
+      <NoInternet v-if="noInternetFound === true" selected_page="Players"/>
+      <GridLayout rows="*, 40" v-if="noInternetFound === false">
         <ListView for="player in players" row="0" @swipe="onSwipe">
           <v-template>
             <GridLayout columns="90, *, 40" rows="1*" class="padding-items">
@@ -49,35 +50,57 @@
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
+import NoInternet from "./NoInternet.vue";
 const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
+const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   components: {
-    AppActionBar: ActionBarComponent
+    AppActionBar: ActionBarComponent,
+    NoInternet: NoInternet
   },
   data() {
     return {
       players: [],
       log: [],
-      Table: this.$routes.Table
+      Table: this.$routes.Table,
+      noInternetFound: false
     };
   },
   mounted() {
     SelectedPageService.getInstance().updateSelectedPage("Players");
-    this.getPlayers();
+    if (this.noInternetFound == false) this.getPlayers();
+  },
+  created() {
+    const myConnectionType = connectivityModule.getConnectionType();
+    switch (myConnectionType) {
+      case connectivityModule.connectionType.none:
+        console.log("No connection");
+        this.noInternetFound = true;
+        break;
+      default:
+        this.noInternetFound = false;
+        break;
+    }
+    connectivityModule.startMonitoring(newConnectionType => {
+      switch (newConnectionType) {
+        case connectivityModule.connectionType.none:
+          console.log("Connection type changed to none.");
+          this.noInternetFound = true;
+          break;
+        default:
+          this.noInternetFound = false;
+          break;
+      }
+    });
   },
   methods: {
     getPositionImage(position) {
       var posFoto = "";
-      if (position == 4)
-        posFoto =
-          "http://icons.iconarchive.com/icons/icons-land/metro-raster-sport/256/Soccer-Ball-icon.png";
-      else if (position == 3)
-        posFoto = "https://image.flaticon.com/icons/png/128/27/27221.png";
-      else if (position == 1)
-        posFoto =
-          "https://www.shareicon.net/data/256x256/2015/10/21/659390_sports_512x512.png";
-      else if (position == 2) posFoto = "http://www.dfkdainava.com/tackle.png";
+      if (position == 4) posFoto = "~/assets/striker.png";
+      else if (position == 3) posFoto = "~/assets/midfielder.png";
+      else if (position == 1) posFoto = "~/assets/goalkeeper.png";
+      else if (position == 2) posFoto = "~/assets/tackle.png";
       return posFoto;
     },
     getPlayers() {

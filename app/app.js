@@ -27,13 +27,13 @@ Vue.config.silent = (TNS_ENV === 'production');
 Vue.prototype.$routes = routes;
 
 new Vue({
-    render (h) {
-        return h(
-          App,
-          [
-            h(DrawerContent, { slot: 'drawerContent' }),
-            h(Home, { slot: 'mainContent' })
-          ]
-        )
-      }
-  }).$start();
+  render(h) {
+    return h(
+      App,
+      [
+        h(DrawerContent, { slot: 'drawerContent' }),
+        h(Home, { slot: 'mainContent' })
+      ]
+    )
+  }
+}).$start();

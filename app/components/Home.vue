@@ -2,16 +2,17 @@
   <Page class="page">
     <AppActionBar page_name="Naujienos"/>
     <GridLayout class="page-content">
-      <GridLayout rows="*, 20, 40">
+      <NoInternet v-if="noInternetFound === true" selected_page="Home"/>
+      <GridLayout v-if="noInternetFound === false" rows="*, 20, 40">
         <ListView for="post in posts" row="0" @swipe="onSwipe">
           <v-template>
             <StackLayout orientation="horizontal" class="padding-items" @tap="openPost(post)">
               <StackLayout width="140" horizontalAlignment="left" verticalAlignment="middle">
-                <Image :src="post.display_image" stretch="aspectFit"></Image>
+                <Image :src="getPostImage(post)" stretch="aspectFit"></Image>
               </StackLayout>
               <StackLayout orientation="vertical" class="post-content">
-                <Label :text="post.title.rendered" class="title" textWrap="true"/>
-                <Label :text="post.exceprt_text" textWrap="true"/>
+                <Label :text="getTitle(post.title.rendered)" class="title" textWrap="true"/>
+                <Label :text="getExcerptText(post.excerpt.rendered)" textWrap="true"/>
               </StackLayout>
             </StackLayout>
           </v-template>
@@ -41,10 +42,14 @@
 import axios from "axios";
 import SelectedPageService from "../shared/selected-page-service";
 import ActionBarComponent from "./ActionBar.vue";
+import NoInternet from "./NoInternet.vue";
+const SwipeDirection = require("tns-core-modules/ui/gestures").SwipeDirection;
+const connectivityModule = require("tns-core-modules/connectivity");
 
 export default {
   components: {
     AppActionBar: ActionBarComponent,
+    NoInternet: NoInternet
   },
   data() {
     return {
@@ -53,14 +58,64 @@ export default {
       log: [],
       Schedule: this.$routes.Schedule,
       Post: this.$routes.Post,
+      noInternetFound: false
     };
   },
   mounted() {
     SelectedPageService.getInstance().updateSelectedPage("Home");
-    this.getPosts();
+    if (this.noInternetFound == false) this.getPosts();
+  },
+  created() {
+    const myConnectionType = connectivityModule.getConnectionType();
+    switch (myConnectionType) {
+      case connectivityModule.connectionType.none:
+        console.log("No connection");
+        this.noInternetFound = true;
+        break;
+      default:
+        this.noInternetFound = false;
+        break;
+    }
+    connectivityModule.startMonitoring(newConnectionType => {
+      switch (newConnectionType) {
+        case connectivityModule.connectionType.none:
+          console.log("Connection type changed to none.");
+          this.noInternetFound = true;
+          break;
+        default:
+          this.noInternetFound = false;
+          if (!Array.isArray(this.posts) || !this.posts.length) {
+            this.getPosts();
+          }
+          break;
+      }
+    });
   },
   computed: {},
   methods: {
+    getPostImage(post) {
+      return (
+        "http://www.dfkdainava.com/wp-content/uploads/" +
+        post._embedded["wp:featuredmedia"]["0"].media_details.file
+      );
+    },
+    getExcerptText(text) {
+      let returnValue =
+        text
+          .replace(/(<([^>]+)>)/gi, "")
+          .replace(/&#8230;/gi, "!")
+          .replace(/&#8211;/gi, "–")
+          .replace(/&nbsp;/gi, "")
+          .substring(0, 90) + "...";
+      return returnValue;
+    },
+    getTitle(title) {
+      return title
+        .replace(/(<([^>]+)>)/gi, "")
+        .replace(/&#8211;/gi, "–")
+        .replace(/&nbsp;/gi, "")
+        .replace(/&#8230;/gi, "!");
+    },
     openPost(selectedPost) {
       this.$navigateTo(this.Post, {
         props: {
@@ -76,18 +131,7 @@ export default {
             this.pageNumber
         )
         .then(response => {
-          let tmp_posts = response.data;
-          tmp_posts.forEach(function(post) {
-            post.exceprt_text =
-              post.excerpt.rendered
-                .replace(/(<([^>]+)>)/gi, "")
-                .substring(0, 90) + "...";
-            post.display_image =
-              "http:/dfkdainava.com/wp-content/uploads/" +
-              post._embedded["wp:featuredmedia"]["0"].media_details.file;
-            post.content_text = post.content.rendered;
-          });
-          this.posts = this.posts.concat(tmp_posts);
+          this.posts = this.posts.concat(response.data);
         })
         .catch(err => {
           console.log(err);

@@ -7,28 +7,28 @@
                    </StackLayout>
                    <StackLayout class="hr-light"></StackLayout>
                     <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Home' ? ' selected': '')" @tap="onNavigationItemTap(Home)">
-                        <Label col="0" text.decode="&#xf005;" class="fa"></Label>
+                        <Image col="0" src="~/assets/news.png" class="fa"/>
                         <Label col="1" text="Naujienos" class="p-r-10"></Label>
                     </GridLayout>
 
                     <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Schedule' ? ' selected': '')" @tap="onNavigationItemTap(Schedule)">
-                        <Label col="0" text.decode="&#xf005;" class="fa"></Label>
+                        <Image col="0" src="~/assets/schedule.png" class="fa"/>
                         <Label col="1" text="Tvarkaraštis" class="p-r-10"></Label>
                     </GridLayout>
 
 
                     <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Results' ? ' selected': '')" @tap="onNavigationItemTap(Results)">
-                        <Label col="0" text.decode="&#xf005;" class="fa"></Label>
+                        <Image col="0" src="~/assets/results.png" class="fa"/>
                         <Label col="1" text="Rezultatai" class="p-r-10"></Label>
                     </GridLayout>
 
                      <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Table' ? ' selected': '')" @tap="onNavigationItemTap(Table)">
-                        <Label col="0" text.decode="&#xf005;" class="fa"></Label>
+                        <Image col="0" src="~/assets/standings.png" class="fa"/>
                         <Label col="1" text="Turnyro lentelė" class="p-r-10"></Label>
                     </GridLayout>
 
                      <GridLayout columns="auto, *" :class="'sidedrawer-list-item' + (selectedPage === 'Players' ? ' selected': '')" @tap="onNavigationItemTap(Players)">
-                        <Label col="0" text.decode="&#xf005;" class="fa"></Label>
+                        <Image col="0" src="~/assets/players.png" class="fa"/>
                         <Label col="1" text="Žaidėjai" class="p-r-10"></Label>
                     </GridLayout>
                 </StackLayout>
